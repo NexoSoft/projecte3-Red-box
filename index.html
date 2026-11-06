@@ -1,1 +1,35 @@
-<!-- Red-Box -->
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Red-Box</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <section id="menu" class="pantalla activa">
+    <svg class="logo" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="95" fill="#c62828"/>
+      <circle cx="100" cy="100" r="65" fill="#ffffff"/>
+      <circle cx="100" cy="100" r="40" fill="#c62828"/>
+      <circle cx="100" cy="100" r="15" fill="#ffffff"/>
+    </svg>
+    <h1>RED-BOX</h1>
+    <p class="lema">Exercici de boxa per a tothom</p>
+    <button id="btnComencar">1. Començar un exercici</button>
+    <button id="btnInstruccions">2. Mostrar les instruccions</button>
+  </section>
+
+  <section id="instruccions" class="pantalla">
+    <h2>Com es juga</h2>
+    <p>Posa't davant de la càmera, a un metre de la pantalla.</p>
+    <p>Sortiran dianes vermelles a l'esquerra o a la dreta.</p>
+    <p>Fes un cop de puny cap a la diana per tocar-la.</p>
+    <p>Cada diana tocada suma un punt. Tens 30 segons!</p>
+    <button id="btnTornar">TORNAR</button>
+  </section>
+
+  <script src="sketch.js"></script>
+</body>
+</html>

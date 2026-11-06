@@ -1,1 +1,34 @@
-/* Red-Box */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #1b1b1b;
+  color: #ffffff;
+  text-align: center;
+}
+.pantalla {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.pantalla.activa { display: flex; }
+.logo { width: 280px; height: 280px; }
+h1 { font-size: 4rem; margin: 0; color: #ff5252; }
+h2 { font-size: 3rem; margin: 0; }
+p { font-size: 1.8rem; margin: 0; }
+.lema { color: #cccccc; }
+button {
+  font-size: 2rem;
+  padding: 20px 40px;
+  min-width: 420px;
+  border: none;
+  border-radius: 14px;
+  background: #c62828;
+  color: #ffffff;
+  cursor: pointer;
+}
+button:hover { background: #e53935; }/* Red-Box */
