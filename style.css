@@ -32,5 +32,23 @@ button {
   cursor: pointer;
 }
 button:hover { background: #e53935; }/* Red-Box */
-#joc { padding: 0; gap: 0; }
+#joc { padding: 0; gap: 0; position: relative; }
+#missatge {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.2rem;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 12px 28px;
+  border-radius: 12px;
+}
+#btnExercici {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#btnExercici:disabled { background: #555555; cursor: not-allowed; }
+#btnExercici.llest { background: #2e7d32; }
 canvas { display: block; }
