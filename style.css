@@ -32,7 +32,9 @@ button {
   cursor: pointer;
 }
 button:hover { background: #e53935; }/* Red-Box */
-#joc { padding: 0; gap: 0; position: relative; }
+#joc { padding: 0; gap: 0; position: relative; overflow: hidden; }
+#joc canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+#missatge, #btnExercici { z-index: 2; }
 #missatge {
   position: absolute;
   top: 20px;
