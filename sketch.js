@@ -15,22 +15,35 @@ document.getElementById("btnTornar").addEventListener("click", function () {
 });
 
 document.getElementById("btnComencar").addEventListener("click", function () {
+  if (!appLlesta) {
+    alert("Espera uns segons: s'està carregant el model.");
+    return;
+  }
   mostrar("joc");
   iniciarCamera();
 });
 
 document.getElementById("btnExercici").addEventListener("click", function () {
-  estat = "exercici";
-  document.getElementById("btnExercici").style.display = "none";
-  document.getElementById("missatge").textContent = "Aquí anirà l'exercici (pas següent)";
+  iniciarExercici();
 });
 
-// ---------- Càmera i detecció (p5.js + ml5.js) ----------
+document.getElementById("btnFinalitzar").addEventListener("click", function () {
+  tornarAlMenu();
+});
+
+// ---------- Variables ----------
 let video;
 let bodyPose;
 let poses = [];
 let cameraActiva = false;
-let estat = "menu"; // menu, colocacio, exercici
+let estat = "menu"; // menu, colocacio, exercici, final
+let appLlesta = false;
+
+const DURADA = 30; // segons
+let punts = 0;
+let tempsInici = 0;
+let diana = null;
+let audio = null;
 
 // Parts del cos que es dibuixen (sense la cara)
 const ARTICULACIONS = [
@@ -50,6 +63,7 @@ const OSSOS = [
   ["right_hip", "right_knee"], ["right_knee", "right_ankle"]
 ];
 
+// ---------- p5.js i ml5.js ----------
 function preload() {
   bodyPose = ml5.bodyPose();
 }
@@ -60,6 +74,7 @@ function setup() {
   c.parent("joc");
   frameRate(30);
   noLoop();
+  appLlesta = true;
 }
 
 function iniciarCamera() {
@@ -76,6 +91,9 @@ function iniciarCamera() {
     cameraActiva = true;
   }
   estat = "colocacio";
+  document.getElementById("marcador").style.display = "none";
+  document.getElementById("final").style.display = "none";
+  document.getElementById("missatge").style.display = "block";
   document.getElementById("btnExercici").style.display = "block";
   document.getElementById("btnExercici").disabled = true;
   document.getElementById("btnExercici").classList.remove("llest");
@@ -99,7 +117,7 @@ function trobar(cos, nom) {
   return null;
 }
 
-// Mira si l'usuari està ben col·locat
+// ---------- Col·locació ----------
 function comprovarPosicio() {
   if (poses.length === 0) {
     return { ok: false, text: "No et veig. Posa't davant de la càmera." };
@@ -127,7 +145,6 @@ function comprovarPosicio() {
   return { ok: true, text: "Molt bé! Ja pots prémer COMENÇAR!" };
 }
 
-// Dibuixa el contorn de referència (cap, espatlles i braços)
 function dibuixarContorn() {
   noFill();
   stroke(255, 255, 255, 220);
@@ -140,7 +157,7 @@ function dibuixarContorn() {
   drawingContext.setLineDash([]);
 }
 
-// Dibuixa l'esquelet: línies entre els punts i les articulacions
+// ---------- Esquelet ----------
 function dibuixarEsquelet() {
   if (poses.length === 0) return;
   let cos = poses[0];
@@ -177,6 +194,105 @@ function dibuixarEsquelet() {
   }
 }
 
+// ---------- Exercici ----------
+function iniciarExercici() {
+  estat = "exercici";
+  punts = 0;
+  tempsInici = millis();
+  novaDiana();
+  document.getElementById("btnExercici").style.display = "none";
+  document.getElementById("missatge").style.display = "none";
+  document.getElementById("punts").textContent = "0";
+  document.getElementById("temps").textContent = DURADA;
+  document.getElementById("marcador").style.display = "block";
+}
+
+// Posa una diana nova a l'esquerra o a la dreta, lluny de les mans
+function novaDiana() {
+  let r = height * 0.09;
+  let cos = poses.length > 0 ? poses[0] : null;
+  for (let intent = 0; intent < 20; intent++) {
+    let x = random() < 0.5 ? width * 0.2 : width * 0.8;
+    let y = random(height * 0.3, height * 0.7);
+    let lluny = true;
+    if (cos) {
+      for (let nom of ["left_wrist", "right_wrist"]) {
+        let m = trobar(cos, nom);
+        if (m && dist(m.x, m.y, x, y) < r * 2.5) {
+          lluny = false;
+        }
+      }
+    }
+    diana = { x: x, y: y, r: r };
+    if (lluny) return;
+  }
+}
+
+function dibuixarDiana() {
+  noStroke();
+  fill(198, 40, 40);
+  circle(diana.x, diana.y, diana.r * 2);
+  fill(255);
+  circle(diana.x, diana.y, diana.r * 1.4);
+  fill(198, 40, 40);
+  circle(diana.x, diana.y, diana.r * 0.8);
+  fill(255);
+  circle(diana.x, diana.y, diana.r * 0.3);
+}
+
+// Si un canell toca la diana, suma un punt
+function comprovarCop() {
+  if (poses.length === 0) return;
+  for (let nom of ["left_wrist", "right_wrist"]) {
+    let m = trobar(poses[0], nom);
+    if (m && dist(m.x, m.y, diana.x, diana.y) < diana.r) {
+      punts++;
+      document.getElementById("punts").textContent = punts;
+      so(600, 0.12, "square");
+      novaDiana();
+      return;
+    }
+  }
+}
+
+function acabarExercici() {
+  estat = "final";
+  so(220, 1.2, "sawtooth"); // botzina final
+  document.getElementById("marcador").style.display = "none";
+  document.getElementById("puntsFinal").textContent = punts;
+  document.getElementById("final").style.display = "flex";
+}
+
+function tornarAlMenu() {
+  document.getElementById("final").style.display = "none";
+  bodyPose.detectStop();
+  video.remove();
+  cameraActiva = false;
+  poses = [];
+  estat = "menu";
+  noLoop();
+  clear();
+  mostrar("menu");
+}
+
+// ---------- So (sense fitxers) ----------
+function so(frequencia, durada, tipus) {
+  if (!audio) {
+    audio = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  let osc = audio.createOscillator();
+  let volum = audio.createGain();
+  osc.type = tipus;
+  osc.frequency.value = frequencia;
+  osc.connect(volum);
+  volum.connect(audio.destination);
+  volum.gain.setValueAtTime(0.4, audio.currentTime);
+  volum.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + durada);
+  osc.start();
+  osc.stop(audio.currentTime + durada);
+}
+
+// ---------- Bucle principal ----------
 function draw() {
   clear(); // el canvas és transparent: el vídeo el mostra el navegador
   if (!cameraActiva) return;
@@ -191,6 +307,18 @@ function draw() {
     document.getElementById("missatge").textContent = r.text;
     document.getElementById("btnExercici").disabled = !r.ok;
     document.getElementById("btnExercici").classList.toggle("llest", r.ok);
+  }
+
+  if (estat === "exercici") {
+    let restant = DURADA - (millis() - tempsInici) / 1000;
+    if (restant <= 0) {
+      document.getElementById("temps").textContent = "0";
+      acabarExercici();
+      return;
+    }
+    document.getElementById("temps").textContent = Math.ceil(restant);
+    dibuixarDiana();
+    comprovarCop();
   }
 }
 
