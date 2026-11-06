@@ -32,3 +32,5 @@ button {
   cursor: pointer;
 }
 button:hover { background: #e53935; }/* Red-Box */
+#joc { padding: 0; gap: 0; }
+canvas { display: block; }
