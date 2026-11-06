@@ -1,10 +1,12 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #1b1b1b;
+  font-family: "Montserrat", Arial, sans-serif;
+  background: radial-gradient(circle at 50% 25%, #4a1010, #121212 70%);
+  background-attachment: fixed;
   color: #ffffff;
   text-align: center;
 }
+
 .pantalla {
   display: none;
   min-height: 100vh;
@@ -16,32 +18,90 @@ body {
   box-sizing: border-box;
 }
 .pantalla.activa { display: flex; }
-.logo { width: 280px; height: 280px; }
-h1 { font-size: 4rem; margin: 0; color: #ff5252; }
-h2 { font-size: 3rem; margin: 0; }
-p { font-size: 1.8rem; margin: 0; }
-.lema { color: #cccccc; }
-button {
+
+/* Menú */
+.logo {
+  width: 260px;
+  height: 260px;
+  overflow: visible;
+  animation: pols 2.4s ease-in-out infinite;
+}
+@keyframes pols {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+h1 {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 7rem;
+  letter-spacing: 6px;
+  margin: 0;
+  line-height: 1;
+}
+h1 span { color: #ff5252; }
+h2 {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 4rem;
+  letter-spacing: 3px;
+  margin: 0;
+}
+h3 {
+  font-family: "Bebas Neue", Impact, sans-serif;
   font-size: 2rem;
-  padding: 20px 40px;
+  letter-spacing: 2px;
+  margin: 10px 0 6px;
+  color: #ff5252;
+}
+p { font-size: 1.4rem; margin: 0; }
+.lema { color: #cccccc; font-size: 1.8rem; margin-bottom: 10px; }
+
+/* Botons */
+button {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 2.4rem;
+  letter-spacing: 2px;
+  padding: 14px 40px;
   min-width: 420px;
-  border: none;
+  border: 3px solid #c62828;
   border-radius: 14px;
   background: #c62828;
   color: #ffffff;
   cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
 }
-button:hover { background: #e53935; }/* Red-Box */
+button:hover { background: #e53935; transform: scale(1.05); }
+button.secundari { background: transparent; color: #ff8a80; }
+button.secundari:hover { background: rgba(198, 40, 40, 0.3); }
+
+/* Instruccions */
+.targetes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+}
+.targeta {
+  width: 280px;
+  padding: 20px;
+  border: 2px solid #c62828;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.07);
+}
+.targeta svg { width: 160px; height: 160px; }
+
+/* Joc */
 #joc { padding: 0; gap: 0; position: relative; overflow: hidden; }
 #joc canvas { position: absolute; top: 0; left: 0; z-index: 1; }
-#missatge, #btnExercici { z-index: 2; }
+#missatge, #btnExercici, #marcador { z-index: 2; }
+canvas { display: block; }
+
 #missatge {
   position: absolute;
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 2.2rem;
-  background: rgba(0, 0, 0, 0.65);
+  font-size: 2rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.7);
   padding: 12px 28px;
   border-radius: 12px;
 }
@@ -51,18 +111,20 @@ button:hover { background: #e53935; }/* Red-Box */
   left: 50%;
   transform: translateX(-50%);
 }
-#btnExercici:disabled { background: #555555; cursor: not-allowed; }
-#btnExercici.llest { background: #2e7d32; }
-canvas { display: block; }
+#btnExercici:hover { transform: translateX(-50%) scale(1.05); }
+#btnExercici:disabled { background: #555555; border-color: #555555; cursor: not-allowed; }
+#btnExercici.llest { background: #2e7d32; border-color: #2e7d32; }
+
 #marcador {
   position: absolute;
   top: 20px;
   left: 20px;
-  z-index: 2;
   display: none;
-  font-size: 2.4rem;
-  background: rgba(0, 0, 0, 0.65);
-  padding: 12px 24px;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 3rem;
+  letter-spacing: 2px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 24px;
   border-radius: 12px;
 }
 #final {
@@ -79,5 +141,11 @@ canvas { display: block; }
   gap: 24px;
   background: rgba(0, 0, 0, 0.85);
 }
-#final p { font-size: 2.4rem; }
-#puntsFinal { color: #ff5252; font-size: 5rem; display: block; }
+#final p { font-size: 2rem; }
+#puntsFinal {
+  display: block;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 9rem;
+  color: #ff5252;
+  line-height: 1;
+}
